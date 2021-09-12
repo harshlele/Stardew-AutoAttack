@@ -24,51 +24,57 @@ namespace BetterAutoAttack
         public override void Entry(IModHelper helper)
         {
             helper.Events.Input.ButtonPressed += Util.ButtonPressTest;
-            helper.Events.GameLoop.UpdateTicked += this.onUpdateTicked;
+            helper.Events.GameLoop.UpdateTicking += this.onUpdateTicking;
             reflection = this.Helper.Reflection;
         }
 
 
 
-        private void onUpdateTicked(object sender, UpdateTickedEventArgs args)
+        private void onUpdateTicking(object sender, UpdateTickingEventArgs args)
         {
-            if (!Context.IsWorldReady)
-            {
-                return;
-            }
+            if (!Context.IsWorldReady) return;
+
             Farmer player = Game1.player;
             GameLocation location = Game1.player.currentLocation;
-            List<NPC> monsters = getMonstersWithinDistance(player.getTileLocation(), 2, location);
-            if (!player.isActive() || player.CurrentTool == null || !(player.CurrentTool is MeleeWeapon) || monsters.Count <= 0)
+            List<NPC> monsters = getMonstersWithinDistance(player.getTileLocation(), 1, location);
+
+            if (!player.isActive() || player.CurrentTool == null || 
+                !(player.CurrentTool is MeleeWeapon) || monsters.Count <= 0 || player.IsBusyDoingSomething())
             {
                 return;
             }
+
             Monster toAttack = (Monster) monsters[0];
             bool blockAttack = false;
             foreach (Monster m in monsters)
             {
-                if(m.health > toAttack.health)
+                if(m.health < toAttack.health)
                 {
                     toAttack = m;
                 }
-                if(Vector2.Distance(m.getTileLocation(), player.getTileLocation()) <= 1){
+                if(Vector2.Distance(m.getTileLocation(), player.getTileLocation()) < 1){
                     toAttack = m;
                     blockAttack = true;
                     break;
                 }
             }
+            
             int direction = player.getGeneralDirectionTowards(toAttack.Position);
             if (player.FacingDirection != direction)
             {
                 player.faceDirection(direction);   
             }
-            if (!player.IsBusyDoingSomething())
-            {
-                if (!blockAttack) player.BeginUsingTool();
-                else ((MeleeWeapon)player.CurrentTool).animateSpecialMove(player);
+
+
+            if (!blockAttack) player.BeginUsingTool();
+            else {
+                int newDir = (direction + 1) % 4;
+                player.tryToMoveInDirection(newDir, true, 0, false);
+                ((MeleeWeapon)player.CurrentTool).animateSpecialMove(player);
             }
             
         }
+        
 
         private static List<NPC> getMonstersWithinDistance(Vector2 tileLocation, int tilesAway, GameLocation environment)
         {

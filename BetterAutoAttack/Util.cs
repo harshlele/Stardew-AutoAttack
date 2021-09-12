@@ -38,7 +38,7 @@ namespace BetterAutoAttack
 
                 Rectangle r = Utility.getRectangleCenteredAt(Game1.player.getTileLocation(), 10);
                 Vector2 spawnAt = Utility.getRandomPositionInThisRectangle(r, new Random());
-                Game1.getFarm().characters.Add(new StardewValley.Monsters.GreenSlime(spawnAt * 64f, 41)
+                Game1.getFarm().characters.Add(new StardewValley.Monsters.GreenSlime(spawnAt * 64f,41)
                 {
                     focusedOnFarmers = true,
                     wildernessFarmMonster = true
@@ -55,11 +55,6 @@ namespace BetterAutoAttack
                     wildernessFarmMonster = true
                 });
             }
-
-            if (SButtonExtensions.IsUseToolButton(e.Button)){
-                Game1.player.completelyStopAnimatingOrDoingAction();
-            }
-            
 
         }
 
