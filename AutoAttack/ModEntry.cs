@@ -9,7 +9,7 @@ using StardewValley.Monsters;
 using StardewValley.Tools;
 
 
-namespace BetterAutoAttack
+namespace AutoAttack
 {
     /// <summary>The mod entry point.</summary>
     public class ModEntry : Mod

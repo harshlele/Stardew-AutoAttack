@@ -4,7 +4,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using Microsoft.Xna.Framework;
 
-namespace BetterAutoAttack
+namespace AutoAttack
 {
     static class Util
     {
